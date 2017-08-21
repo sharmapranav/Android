@@ -13,8 +13,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         items.add("item one");
         items.add("item two");
 
+//        readItemsFromFile();
+        readItemsFromDatabase();
+
         //Create an adapter for the list view using Android's built-in item layout
         itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
 
@@ -57,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         if (toAddString != null && toAddString.length() > 0) {
             itemsAdapter.add(toAddString);
             addItemEditText.setText("");
+//            saveItemsToFile();
+            saveItemsToDatabase();
         }
     }
 
@@ -71,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(this, "updated:" + editedItem, Toast.LENGTH_SHORT).show();
                 itemsAdapter.notifyDataSetChanged();
+
+//                saveItemsToFile();
+                saveItemsToDatabase();
             }
         }
     }
@@ -86,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
                         //delete the item
                         items.remove(position);
                         itemsAdapter.notifyDataSetChanged();
+
+//                        saveItemsToFile();
+                        saveItemsToDatabase();
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -116,5 +132,58 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void readItemsFromFile() {
+        //retrieve the app's private folder.
+        //this folder cannot be accessed by other apps
+        File filesDir = getFilesDir();
+
+        //prepare a file to read the data
+        File todoFile = new File(filesDir, "todo.txt");
+
+        //if file does not exist, create an empty list
+        if (!todoFile.exists()) {
+            items = new ArrayList<String>();
+        } else {
+            try {
+                //read data and put it into the ArrayList
+                items = new ArrayList<String>(FileUtils.readLines(todoFile));
+            } catch (IOException ex) {
+                items = new ArrayList<String>();
+            }
+        }
+    }
+
+    private void saveItemsToFile() {
+        File filesDir = getFilesDir();
+
+        //using the same file for reading. Should use define a global string instead.
+        File todoFile = new File(filesDir, "todo.txt");
+        try {
+            //write list to file
+            FileUtils.writeLines(todoFile, items);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void readItemsFromDatabase() {
+        //read items from database
+        List<ToDoItem> itemsFromORM = ToDoItem.listAll(ToDoItem.class);
+        items = new ArrayList<String>();
+        if (itemsFromORM != null & itemsFromORM.size() > 0) {
+            for (ToDoItem item : itemsFromORM) {
+                items.add(item.todo);
+            }
+        }
+    }
+
+    private void saveItemsToDatabase() {
+        ToDoItem.deleteAll(ToDoItem.class);
+        for (String todo : items) {
+            ToDoItem item = new ToDoItem(todo);
+            item.save();
+        }
     }
 }
