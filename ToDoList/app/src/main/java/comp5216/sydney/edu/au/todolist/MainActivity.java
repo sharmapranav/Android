@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
     //define variables
     ListView listview;
-    ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
+    ArrayList<ToDoItem> items;
+    ArrayAdapter<ToDoItem> itemsAdapter;
 
     public final int NEW_ITEM_REQUEST_CODE = 646;
     public final int EDIT_ITEM_REQUEST_CODE = 647;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         readItemsFromDatabase();
 
         //Create an adapter for the list view using Android's built-in item layout
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        itemsAdapter = new ToDoItemsAdapter(this, items);
 
         //connect the listview and the adapter
         listview.setAdapter(itemsAdapter);
@@ -56,16 +56,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == NEW_ITEM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
 
                 // Extract name value from result extras
-                String toAddString = data.getExtras().getString("item");
+                ToDoItem toDoItem = (ToDoItem) data.getSerializableExtra("item");
                 int position = items.size();
-                items.add(toAddString);
+                items.add(toDoItem);
 
-                Log.i("Updated Item in list:", toAddString + ",position:" + position);
-                Toast.makeText(this, "added:" + toAddString, Toast.LENGTH_SHORT).show();
+                Log.i("Updated Item in list:", toDoItem.toString() + ",position:" + position);
+                Toast.makeText(this, "Added: " + toDoItem.getTodo(), Toast.LENGTH_SHORT).show();
 
                 itemsAdapter.notifyDataSetChanged();
 
@@ -75,12 +76,12 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
 
                 // Extract name value from result extras
-                String editedItem = data.getExtras().getString("item");
+                ToDoItem toDoItem = (ToDoItem) data.getSerializableExtra("item");
                 int position = data.getIntExtra("position", -1);
-                items.set(position, editedItem);
+                items.set(position, toDoItem);
 
-                Log.i("Updated Item in list:", editedItem + ",position:" + position);
-                Toast.makeText(this, "updated:" + editedItem, Toast.LENGTH_SHORT).show();
+                Log.i("Updated Item in list:", toDoItem + ",position:" + position);
+                Toast.makeText(this, "Updated: " + toDoItem.getTodo(), Toast.LENGTH_SHORT).show();
 
                 itemsAdapter.notifyDataSetChanged();
 
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String updateItem = (String) itemsAdapter.getItem(position);
+                ToDoItem updateItem = (ToDoItem) itemsAdapter.getItem(position);
 
                 Log.i("MainActivity", "Clicked item " + position + ": " + updateItem);
 
@@ -147,22 +148,22 @@ public class MainActivity extends AppCompatActivity {
 
         //read items from database
         List<ToDoItem> itemsFromORM = ToDoItem.listAll(ToDoItem.class);
-        items = new ArrayList<String>();
+        items = new ArrayList<ToDoItem>();
 
         if (itemsFromORM != null & itemsFromORM.size() > 0) {
             for (ToDoItem item : itemsFromORM) {
-                items.add(item.todo);
+                items.add(item);
             }
         }
+
     }
 
     private void saveItemsToDatabase() {
 
         ToDoItem.deleteAll(ToDoItem.class);
 
-        for (String todo : items) {
-            ToDoItem item = new ToDoItem(todo);
-            item.save();
+        for (ToDoItem todo : items) {
+            todo.save();
         }
     }
 }

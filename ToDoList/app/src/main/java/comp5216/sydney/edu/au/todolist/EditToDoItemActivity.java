@@ -15,9 +15,9 @@ import java.util.Locale;
 
 
 public class EditToDoItemActivity extends Activity {
-    public String editItem = null;
-    public int position = 0;
-    EditText etItem;
+
+    ToDoItem toDoItem;
+    int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,26 +27,25 @@ public class EditToDoItemActivity extends Activity {
         setContentView(R.layout.activity_edit_item);
 
         //Get the data from the main screen
-        editItem = getIntent().getStringExtra("item");
+        toDoItem = (ToDoItem) getIntent().getSerializableExtra("item");
         position = getIntent().getIntExtra("position", -1);
 
-        if(editItem != null && position != -1) {
+        if (toDoItem != null && position != -1) {
 
             // show original content in the text field
-            etItem = (EditText) findViewById(R.id.etEditItem);
-            String temp[] = editItem.split("\n");
-            editItem = temp[0];
-            etItem.setText(editItem);
+            EditText etItem = (EditText) findViewById(R.id.etEditItem);
+            etItem.setText(toDoItem.getTodo());
+        } else {
+            toDoItem = new ToDoItem();
         }
     }
 
     public void onSubmit(View v) {
-        etItem = (EditText) findViewById(R.id.etEditItem);
+        EditText etItem = (EditText) findViewById(R.id.etEditItem);
 
         String todoText = etItem.getText().toString();
 
-        if(todoText == null || todoText.isEmpty())
-        {
+        if (todoText == null || todoText.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(EditToDoItemActivity.this);
             builder.setTitle(R.string.todo_title).setMessage(R.string.dialog_todo_empty_msg).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -57,8 +56,7 @@ public class EditToDoItemActivity extends Activity {
             });
 
             builder.create().show();
-        }
-        else {
+        } else {
 
             // Prepare data intent for sending it back
             Intent data = new Intent();
@@ -66,25 +64,33 @@ public class EditToDoItemActivity extends Activity {
             Date currentTime = Calendar.getInstance().getTime();
             SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm a", Locale.getDefault());
 
-            todoText += "\n" + format.format(currentTime);
+            toDoItem.setTodo(todoText);
+            toDoItem.setDate(currentTime);
 
             // Pass relevant data back as a result
-            data.putExtra("item", todoText);
+            data.putExtra("item", toDoItem);
+
             if (position != -1) {
                 data.putExtra("position", position);
             }
 
             // Activity finished ok, return the data
-            setResult(RESULT_OK, data); // set result code and bundle data for response
-            finish(); // closes the activity, pass data to parent
+            // set result code and bundle data for response
+            setResult(RESULT_OK, data);
+
+            // closes the activity, pass data to parent
+            finish();
         }
     }
 
     public void onCancel(View v) {
 
         // Activity finished ok, return the data
-        setResult(RESULT_CANCELED); // set result code and bundle data for response
-        finish(); // closes the activity, pass data to parent
+        // set result code and bundle data for response
+        setResult(RESULT_CANCELED);
+
+        // closes the activity, pass data to parent
+        finish();
     }
 
 }
