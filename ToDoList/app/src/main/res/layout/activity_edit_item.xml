@@ -1,36 +1,62 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="comp5216.sydney.edu.au.todolist.EditToDoItemActivity" >
+    android:layout_margin="5pt"
+    tools:context="comp5216.sydney.edu.au.todolist.EditToDoItemActivity">
+
+    <EditText
+        android:id="@+id/etEditItem"
+        android:hint="@string/todo_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <requestFocus />
+    </EditText>
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/edit" />
+        android:layout_marginTop="5pt"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etEditItem"
+        android:text="@string/time" />
 
-    <EditText
-        android:id="@+id/etEditItem"
+    <TextClock
+        android:id="@+id/textClock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
+        android:layout_marginTop="5pt"
+        android:layout_marginLeft="5pt"
+        app:layout_constraintLeft_toRightOf="@+id/textView1"
+        app:layout_constraintTop_toBottomOf="@+id/etEditItem" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/etEditItem"
-        android:layout_below="@+id/etEditItem"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="5pt"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textClock"
         android:onClick="onSubmit"
-        android:text="Save" />
+        android:text="@string/save" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5pt"
+        app:layout_constraintLeft_toRightOf="@+id/btnSave"
+        app:layout_constraintTop_toBottomOf="@+id/textClock"
+        android:onClick="onCancel"
+        android:text="@string/cancel" />
+
+</android.support.constraint.ConstraintLayout>
 
 

@@ -9,16 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listview;
     ArrayList<String> items;
     ArrayAdapter<String> itemsAdapter;
-    EditText addItemEditText;
+
+    public final int NEW_ITEM_REQUEST_CODE = 646;
     public final int EDIT_ITEM_REQUEST_CODE = 647;
 
     @Override
@@ -39,14 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         //reference the "listview" variable to the id-"listview" in the layout
         listview = (ListView) findViewById(R.id.listview);
-        addItemEditText = (EditText) findViewById(R.id.txtNewItem);
 
-        //create an ArrayList of String
-        items = new ArrayList<String>();
-        items.add("item one");
-        items.add("item two");
-
-//        readItemsFromFile();
         readItemsFromDatabase();
 
         //Create an adapter for the list view using Android's built-in item layout
@@ -59,30 +47,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddItemClick(View view) {
-        String toAddString = addItemEditText.getText().toString();
-        toAddString += " " + new Date().toString();
+        Intent intent = new Intent(MainActivity.this, EditToDoItemActivity.class);
 
-        if (toAddString != null && toAddString.length() > 0) {
-            itemsAdapter.add(toAddString);
-            addItemEditText.setText("");
-//            saveItemsToFile();
-            saveItemsToDatabase();
+        if (intent != null) {
+            startActivityForResult(intent, NEW_ITEM_REQUEST_CODE);
+            itemsAdapter.notifyDataSetChanged();
         }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_ITEM_REQUEST_CODE) {
+        if (requestCode == NEW_ITEM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+
+                // Extract name value from result extras
+                String toAddString = data.getExtras().getString("item");
+                int position = items.size();
+                items.add(toAddString);
+
+                Log.i("Updated Item in list:", toAddString + ",position:" + position);
+                Toast.makeText(this, "added:" + toAddString, Toast.LENGTH_SHORT).show();
+
+                itemsAdapter.notifyDataSetChanged();
+
+                saveItemsToDatabase();
+            }
+        } else if (requestCode == EDIT_ITEM_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
                 // Extract name value from result extras
                 String editedItem = data.getExtras().getString("item");
                 int position = data.getIntExtra("position", -1);
                 items.set(position, editedItem);
-                Log.i("Updated Item in list:", editedItem + ",position:" + position);
 
+                Log.i("Updated Item in list:", editedItem + ",position:" + position);
                 Toast.makeText(this, "updated:" + editedItem, Toast.LENGTH_SHORT).show();
+
                 itemsAdapter.notifyDataSetChanged();
 
-//                saveItemsToFile();
                 saveItemsToDatabase();
             }
         }
@@ -92,23 +93,27 @@ public class MainActivity extends AppCompatActivity {
 
         listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long rowId) {
+
                 Log.i("MainActivity", "Long Clicked item " + position);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle(R.string.dialog_delete_title).setMessage(R.string.dialog_delete_msg).setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
                         //delete the item
                         items.remove(position);
                         itemsAdapter.notifyDataSetChanged();
 
-//                        saveItemsToFile();
                         saveItemsToDatabase();
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
                         //User cancelled the dialog
                         // nothing happens
                     }
                 });
+
                 builder.create().show();
                 return true;
             }
@@ -117,11 +122,15 @@ public class MainActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 String updateItem = (String) itemsAdapter.getItem(position);
+
                 Log.i("MainActivity", "Clicked item " + position + ": " + updateItem);
 
                 Intent intent = new Intent(MainActivity.this, EditToDoItemActivity.class);
+
                 if (intent != null) {
+
                     // put "extras" into the bundle for access in the edit activity
                     intent.putExtra("item", updateItem);
                     intent.putExtra("position", position);
@@ -134,44 +143,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void readItemsFromFile() {
-        //retrieve the app's private folder.
-        //this folder cannot be accessed by other apps
-        File filesDir = getFilesDir();
-
-        //prepare a file to read the data
-        File todoFile = new File(filesDir, "todo.txt");
-
-        //if file does not exist, create an empty list
-        if (!todoFile.exists()) {
-            items = new ArrayList<String>();
-        } else {
-            try {
-                //read data and put it into the ArrayList
-                items = new ArrayList<String>(FileUtils.readLines(todoFile));
-            } catch (IOException ex) {
-                items = new ArrayList<String>();
-            }
-        }
-    }
-
-    private void saveItemsToFile() {
-        File filesDir = getFilesDir();
-
-        //using the same file for reading. Should use define a global string instead.
-        File todoFile = new File(filesDir, "todo.txt");
-        try {
-            //write list to file
-            FileUtils.writeLines(todoFile, items);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
     private void readItemsFromDatabase() {
+
         //read items from database
         List<ToDoItem> itemsFromORM = ToDoItem.listAll(ToDoItem.class);
         items = new ArrayList<String>();
+
         if (itemsFromORM != null & itemsFromORM.size() > 0) {
             for (ToDoItem item : itemsFromORM) {
                 items.add(item.todo);
@@ -180,7 +157,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveItemsToDatabase() {
+
         ToDoItem.deleteAll(ToDoItem.class);
+
         for (String todo : items) {
             ToDoItem item = new ToDoItem(todo);
             item.save();

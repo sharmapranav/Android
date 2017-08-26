@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">ToDoList</string>
+    <string name="add_new">Add New</string>
     <string name="dialog_delete_title">Delete an item</string>
     <string name="dialog_delete_msg">Do you want to delete this item?</string>
     <string name="delete">Delete</string>
-    <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
+    <string name="todo_title">Title of todo item</string>
+    <string name="dialog_todo_empty_msg">Title of todo item cannot be empty</string>
+    <string name="time">Time</string>
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
