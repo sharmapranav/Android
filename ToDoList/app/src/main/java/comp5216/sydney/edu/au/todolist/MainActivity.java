@@ -155,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 items.add(item);
             }
         }
-
     }
 
     private void saveItemsToDatabase() {

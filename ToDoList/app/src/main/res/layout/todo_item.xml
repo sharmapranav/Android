@@ -12,6 +12,7 @@
         android:layout_marginLeft="5pt"
         android:layout_marginTop="5pt"
         android:layout_marginRight="5pt"
+        android:textColor="@color/colorPrimaryDark"
         android:text="Text2" />
 
     <TextView
