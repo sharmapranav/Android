@@ -18,8 +18,8 @@
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="comp5216.sydney.edu.au.mediaaccess.fileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
@@ -31,9 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PhotoActivity">
-        </activity>
-
+        <activity android:name=".PhotoActivity"></activity>
+        <activity android:name=".CameraActivity"></activity>
     </application>
 
 </manifest>

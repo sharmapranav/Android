@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 //    private static final int MY_PERMISSIONS_REQUEST_RECORD_VIDEO = 103;
 //    private static final int MY_PERMISSIONS_REQUEST_READ_VIDEOS= 104;
 //    private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO= 105;
+    private static final int MY_PERMISSIONS_REQUEST_OPEN_CUSTOM_CAMERA = 102;
 
     MarshMallowPermission marshMallowPermission;
     GridView photoGrid;
@@ -81,6 +81,10 @@ public class MainActivity extends AppCompatActivity {
         );
 
         photos.clear();
+//        if(mediaStorageDir.listFiles() == null)
+//        {
+//            return;
+//        }
         for(File file: mediaStorageDir.listFiles()){
             Bitmap photo = BitmapFactory.decodeFile(file.getPath());
             photos.add(photo);
@@ -149,8 +153,17 @@ public class MainActivity extends AppCompatActivity {
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, file_uri);
 
-             // Start the image capture intent to take photo
-            startActivityForResult(takePictureIntent, MY_PERMISSIONS_REQUEST_OPEN_CAMERA);
+            Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+            File mediaStorageDir = new File(
+                    Environment.getExternalStorageDirectory().getPath(),
+                    "/images/"
+            );
+            String path = mediaStorageDir.getAbsolutePath() + "/" + photoFileName;
+            intent.putExtra("photoPath", path);
+            startActivityForResult(intent, MY_PERMISSIONS_REQUEST_OPEN_CAMERA);
+
+            // Start the image capture intent to take photo
+//            startActivityForResult(takePictureIntent, MY_PERMISSIONS_REQUEST_OPEN_CAMERA);
         }
     }
 
@@ -216,6 +229,29 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == MY_PERMISSIONS_REQUEST_OPEN_CAMERA) {
             if (resultCode == RESULT_OK) {
                 loadPhotos();
+//                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+//                        Locale.getDefault()).format(new Date());
+//                photoFileName = "IMG_"+timeStamp+".jpg";
+//                Uri file_uri = getFileUri(photoFileName,0);
+//
+//                byte[] bytes = data.getByteArrayExtra("photo_data");
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//
+//                FileOutputStream fs = null;
+//                try {
+//                    fs = new FileOutputStream(file_uri.toString());
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fs);
+//                } catch (FileNotFoundException ex) {
+//                    System.out.println(ex.getMessage());
+//                } finally {
+//                    try {
+//                        fs.close();
+//                    } catch (IOException ex) {
+//                        System.out.println(ex.getMessage());
+//                    }
+//                }
+
+
 //                Uri takenPhotoUri = getFileUri(photoFileName,0);
                 // by this point we have the camera photo on disk
 //                Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri
@@ -224,9 +260,48 @@ public class MainActivity extends AppCompatActivity {
 //                ivPreview.setImageBitmap(takenImage);
 //                ivPreview.setVisibility(View.VISIBLE);
             } else { // Result was a failure
-                Toast.makeText(this, "Picture wasn't taken!",
-                        Toast.LENGTH_SHORT).show();
+                loadPhotos();
+//                Toast.makeText(this, "Picture wasn't taken!",
+//                        Toast.LENGTH_SHORT).show();
             }
+//        }
+//        else if (requestCode == MY_PERMISSIONS_REQUEST_OPEN_CUSTOM_CAMERA) {
+//            if (resultCode == RESULT_OK) {
+//                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+//                        Locale.getDefault()).format(new Date());
+//                photoFileName = "IMG_" + timeStamp + ".jpg";
+//                Uri file_uri = getFileUri(photoFileName, 0);
+//
+//                byte[] bytes = data.getByteArrayExtra("photo_data");
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//
+//                FileOutputStream fs = null;
+//                try {
+//                    fs = new FileOutputStream(file_uri.toString());
+//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fs);
+//                } catch (FileNotFoundException ex) {
+//                    System.out.println(ex.getMessage());
+//                } finally {
+//                    try {
+//                        fs.close();
+//                    } catch (IOException ex) {
+//                        System.out.println(ex.getMessage());
+//                    }
+//                }
+//
+//                loadPhotos();
+////                Uri takenPhotoUri = getFileUri(photoFileName,0);
+//                // by this point we have the camera photo on disk
+////                Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri
+////                        .getPath());
+//                // Load the taken image into a preview
+////                ivPreview.setImageBitmap(takenImage);
+////                ivPreview.setVisibility(View.VISIBLE);
+//            }
+//            else { // Result was a failure
+//                Toast.makeText(this, "Picture wasn't taken!",
+//                        Toast.LENGTH_SHORT).show();
+//            }
         }
         else if(requestCode == OPEN_PHOTO){
             if(resultCode == RESULT_OK){

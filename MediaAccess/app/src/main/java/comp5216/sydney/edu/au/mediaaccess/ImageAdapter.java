@@ -29,7 +29,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public Object getItem(int position) {
-        return photos.get(position)
+        return photos.get(position);
     }
 
     public long getItemId(int position) {
