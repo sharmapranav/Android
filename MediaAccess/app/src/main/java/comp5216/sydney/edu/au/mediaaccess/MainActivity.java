@@ -43,23 +43,22 @@ public class MainActivity extends AppCompatActivity {
 
         marshMallowPermission = new MarshMallowPermission(this);
 
+        if (!marshMallowPermission.checkPermissionForReadfiles()) {
+            marshMallowPermission.requestPermissionForReadfiles();
+        }
+
         photos = new ArrayList();
         photoGrid = (GridView) findViewById(R.id.gridview);
         photoGrid.setAdapter(new ImageAdapter(this, photos));
         photoGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!marshMallowPermission.checkPermissionForReadfiles()) {
-                    marshMallowPermission.requestPermissionForReadfiles();
-                } else {
+                String photoPath = getPhotoFileName(i);
 
-                    String photoPath = getPhotoFileName(i);
+                Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+                intent.putExtra("photoPath", photoPath);
 
-                    Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
-                    intent.putExtra("photoPath", photoPath);
-
-                    startActivityForResult(intent, OPEN_PHOTO);
-                }
+                startActivityForResult(intent, OPEN_PHOTO);
             }
         });
 
@@ -69,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadPhotos() {
+
         File mediaStorageDir = new File(
                 Environment.getExternalStorageDirectory().getPath(),
                 "/images/"
