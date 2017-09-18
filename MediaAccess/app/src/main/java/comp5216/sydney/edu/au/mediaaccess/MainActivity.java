@@ -3,7 +3,6 @@ package comp5216.sydney.edu.au.mediaaccess;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,14 +12,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,30 +27,84 @@ public class MainActivity extends AppCompatActivity {
 
     public final String APP_TAG = "MobileComputingTutorial";
     public String photoFileName = "photo.jpg";
-    public String videoFileName = "video.mp4";
+//    public String videoFileName = "video.mp4";
 
     // request codes
+    private static final int OPEN_PHOTO = 100;
     private static final int MY_PERMISSIONS_REQUEST_OPEN_CAMERA = 101;
-    private static final int MY_PERMISSIONS_REQUEST_READ_PHOTOS= 102;
-    private static final int MY_PERMISSIONS_REQUEST_RECORD_VIDEO = 103;
-    private static final int MY_PERMISSIONS_REQUEST_READ_VIDEOS= 104;
-    private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO= 105;
+//    private static final int MY_PERMISSIONS_REQUEST_READ_PHOTOS= 102;
+//    private static final int MY_PERMISSIONS_REQUEST_RECORD_VIDEO = 103;
+//    private static final int MY_PERMISSIONS_REQUEST_READ_VIDEOS= 104;
+//    private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO= 105;
+
+    MarshMallowPermission marshMallowPermission;
+    GridView photoGrid;
+    ArrayList<Bitmap> photos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        marshMallowPermission = new MarshMallowPermission(this);
+
+        photos = new ArrayList();
+        photoGrid = (GridView) findViewById(R.id.gridview);
+        photoGrid.setAdapter(new ImageAdapter(this, photos));
+        photoGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!marshMallowPermission.checkPermissionForReadfiles()) {
+                    marshMallowPermission.requestPermissionForReadfiles();
+                } else {
+
+                    String photoPath = getPhotoFileName(i);
+                    // Create intent for picking a photo from the gallery
+                    Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+                    intent.putExtra("photoPath", photoPath);
+
+                    // Bring up gallery to select a photo
+                    startActivityForResult(intent, OPEN_PHOTO);
+                }
+            }
+        });
+
+        loadPhotos();
+
         System.out.println("package name: "+getPackageName());
+    }
+
+    public void loadPhotos()
+    {
+        File mediaStorageDir = new File(
+                Environment.getExternalStorageDirectory().getPath(),
+                "/images/"
+        );
+
+        photos.clear();
+        for(File file: mediaStorageDir.listFiles()){
+            Bitmap photo = BitmapFactory.decodeFile(file.getPath());
+            photos.add(photo);
+        }
+    }
+
+    public String getPhotoFileName(int index){
+        File mediaStorageDir = new File(
+                Environment.getExternalStorageDirectory().getPath(),
+                "/images/"
+        );
+
+        File photoFile = mediaStorageDir.listFiles()[index];
+        return photoFile.getPath();
     }
 
     // Returns the Uri for a photo/media stored on disk given the fileName
     public Uri getFileUri(String fileName, int type) {
         String typestr = "/images/";
-        if (type == 1) {
-            typestr = "/videos/";
-        } else if (type != 0){
-            typestr = "/audios/";
-        }
+//        if (type == 1) {
+//            typestr = "/videos/";
+//        } else if (type != 0){
+//            typestr = "/audios/";
+//        }
         // Get safe storage directory for photos
         File mediaStorageDir = new File(
                 Environment.getExternalStorageDirectory().getPath(),
@@ -78,8 +130,6 @@ public class MainActivity extends AppCompatActivity {
         return photoURI;
     }
 
-    MarshMallowPermission marshMallowPermission = new MarshMallowPermission(this);
-
     public void onTakePhotoClick(View v) {
         // Check permissions
         if (!marshMallowPermission.checkPermissionForCamera()
@@ -104,131 +154,136 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void onLoadPhotoClick(View view) {
-        if (!marshMallowPermission.checkPermissionForReadfiles()) {
-            marshMallowPermission.requestPermissionForReadfiles();
-        } else {
-            // Create intent for picking a photo from the gallery
-            Intent intent = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-            // Bring up gallery to select a photo
-            startActivityForResult(intent, MY_PERMISSIONS_REQUEST_READ_PHOTOS);
-        }
-    }
-
-    public void onLoadVideoClick(View view) {
-        if (!marshMallowPermission.checkPermissionForReadfiles()) {
-            marshMallowPermission.requestPermissionForReadfiles();
-        } else {
-            // Create intent for picking a video from the gallery
-            Intent intent = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-
-            // Bring up gallery to select a photo
-            startActivityForResult(intent, MY_PERMISSIONS_REQUEST_READ_VIDEOS);
-        }
-    }
-
-    public void onRecordVideoClick(View v) {
-        // Check permissions
-        if (!marshMallowPermission.checkPermissionForCamera()
-                || !marshMallowPermission.checkPermissionForExternalStorage()) {
-            marshMallowPermission.requestPermissionForCamera();
-        }  else {
-            // create Intent to take a picture and return control to the calling application
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
-            // set file name
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                    Locale.getDefault()).format(new Date());
-
-            videoFileName = "VIDEO_"+timeStamp+".mp4";
-            Uri file_uri = getFileUri(videoFileName,1);
-            System.out.println(file_uri);
-
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, file_uri);
-
-            // Start the image capture intent to capture video
-            startActivityForResult(takePictureIntent, MY_PERMISSIONS_REQUEST_RECORD_VIDEO);
-        }
-    }
+    //    public void onLoadPhotoClick(View view) {
+//        if (!marshMallowPermission.checkPermissionForReadfiles()) {
+//            marshMallowPermission.requestPermissionForReadfiles();
+//        } else {
+//            // Create intent for picking a photo from the gallery
+//            Intent intent = new Intent(Intent.ACTION_PICK,
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//            // Bring up gallery to select a photo
+//            startActivityForResult(intent, MY_PERMISSIONS_REQUEST_READ_PHOTOS);
+//        }
+//    }
+//
+//    public void onLoadVideoClick(View view) {
+//        if (!marshMallowPermission.checkPermissionForReadfiles()) {
+//            marshMallowPermission.requestPermissionForReadfiles();
+//        } else {
+//            // Create intent for picking a video from the gallery
+//            Intent intent = new Intent(Intent.ACTION_PICK,
+//                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+//
+//            // Bring up gallery to select a photo
+//            startActivityForResult(intent, MY_PERMISSIONS_REQUEST_READ_VIDEOS);
+//        }
+//    }
+//
+//    public void onRecordVideoClick(View v) {
+//        // Check permissions
+//        if (!marshMallowPermission.checkPermissionForCamera()
+//                || !marshMallowPermission.checkPermissionForExternalStorage()) {
+//            marshMallowPermission.requestPermissionForCamera();
+//        }  else {
+//            // create Intent to take a picture and return control to the calling application
+//            Intent takePictureIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+//
+//            // set file name
+//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+//                    Locale.getDefault()).format(new Date());
+//
+//            videoFileName = "VIDEO_"+timeStamp+".mp4";
+//            Uri file_uri = getFileUri(videoFileName,1);
+//            System.out.println(file_uri);
+//
+//            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, file_uri);
+//
+//            // Start the image capture intent to capture video
+//            startActivityForResult(takePictureIntent, MY_PERMISSIONS_REQUEST_RECORD_VIDEO);
+//        }
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        final VideoView mVideoView = (VideoView) findViewById(R.id.videoview);
-        ImageView ivPreview = (ImageView) findViewById(R.id.photopreview);
-
-        mVideoView.setVisibility(View.GONE);
-        ivPreview.setVisibility(View.GONE);
+//        final VideoView mVideoView = (VideoView) findViewById(R.id.videoview);
+//        ImageView ivPreview = (ImageView) findViewById(R.id.photopreview);
+//
+//        mVideoView.setVisibility(View.GONE);
+//        ivPreview.setVisibility(View.GONE);
 
         if (requestCode == MY_PERMISSIONS_REQUEST_OPEN_CAMERA) {
             if (resultCode == RESULT_OK) {
-                Uri takenPhotoUri = getFileUri(photoFileName,0);
+                loadPhotos();
+//                Uri takenPhotoUri = getFileUri(photoFileName,0);
                 // by this point we have the camera photo on disk
-                Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri
-                        .getPath());
+//                Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri
+//                        .getPath());
                 // Load the taken image into a preview
-                ivPreview.setImageBitmap(takenImage);
-                ivPreview.setVisibility(View.VISIBLE);
+//                ivPreview.setImageBitmap(takenImage);
+//                ivPreview.setVisibility(View.VISIBLE);
             } else { // Result was a failure
                 Toast.makeText(this, "Picture wasn't taken!",
                         Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == MY_PERMISSIONS_REQUEST_READ_PHOTOS) {
-            if (resultCode == RESULT_OK) {
-                Uri photoUri = data.getData();
-                // Do something with the photo based on Uri
-                Bitmap selectedImage;
-                try {
-                    selectedImage = MediaStore.Images.Media.getBitmap(
-                            this.getContentResolver(), photoUri);
-                    // Load the selected image into a preview
-
-                    ivPreview.setImageBitmap(selectedImage);
-                    ivPreview.setVisibility(View.VISIBLE);
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-        } else if (requestCode == MY_PERMISSIONS_REQUEST_READ_VIDEOS) {
-            if (resultCode == RESULT_OK) {
-                Uri videoUri = data.getData();
-
-                mVideoView.setVisibility(View.VISIBLE);
-                mVideoView.setVideoURI(videoUri);
-                mVideoView.requestFocus();
-                mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    // Close the progress bar and play the video
-                    public void onPrepared(MediaPlayer mp) {
-                        mVideoView.start();
-                    }
-                });
-
-            }
-
-        }else if (requestCode == MY_PERMISSIONS_REQUEST_RECORD_VIDEO) {
-            if (resultCode == RESULT_OK) {
-                Uri takenVideoUri = getFileUri(videoFileName,1);
-                mVideoView.setVisibility(View.VISIBLE);
-                mVideoView.setVideoURI(takenVideoUri);
-
-                mVideoView.requestFocus();
-                mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    // Close the progress bar and play the video
-                    public void onPrepared(MediaPlayer mp) {
-                        mVideoView.start();
-                    }
-                });
+        }
+        else if(requestCode == OPEN_PHOTO){
+            if(resultCode == RESULT_OK){
+                loadPhotos();
             }
         }
+//        else if (requestCode == MY_PERMISSIONS_REQUEST_READ_PHOTOS) {
+//            if (resultCode == RESULT_OK) {
+//                Uri photoUri = data.getData();
+//                // Do something with the photo based on Uri
+//                Bitmap selectedImage;
+//                try {
+//                    selectedImage = MediaStore.Images.Media.getBitmap(
+//                            this.getContentResolver(), photoUri);
+//                    // Load the selected image into a preview
+//
+//                    ivPreview.setImageBitmap(selectedImage);
+//                    ivPreview.setVisibility(View.VISIBLE);
+//                } catch (FileNotFoundException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//        } else if (requestCode == MY_PERMISSIONS_REQUEST_READ_VIDEOS) {
+//            if (resultCode == RESULT_OK) {
+//                Uri videoUri = data.getData();
+//
+//                mVideoView.setVisibility(View.VISIBLE);
+//                mVideoView.setVideoURI(videoUri);
+//                mVideoView.requestFocus();
+//                mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                    // Close the progress bar and play the video
+//                    public void onPrepared(MediaPlayer mp) {
+//                        mVideoView.start();
+//                    }
+//                });
+//
+//            }
+//
+//        }else if (requestCode == MY_PERMISSIONS_REQUEST_RECORD_VIDEO) {
+//            if (resultCode == RESULT_OK) {
+//                Uri takenVideoUri = getFileUri(videoFileName,1);
+//                mVideoView.setVisibility(View.VISIBLE);
+//                mVideoView.setVideoURI(takenVideoUri);
+//
+//                mVideoView.requestFocus();
+//                mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                    // Close the progress bar and play the video
+//                    public void onPrepared(MediaPlayer mp) {
+//                        mVideoView.start();
+//                    }
+//                });
+//            }
+//        }
     }
-
-
 }

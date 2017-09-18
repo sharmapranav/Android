@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/crop"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <EditText
+        android:id="@+id/left_crop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:hint="L"
+        android:ems="3"
+        app:layout_constraintRight_toLeftOf="@+id/top_crop"
+        app:layout_constraintBottom_toTopOf="@+id/cancel" />
+
+    <EditText
+        android:id="@+id/top_crop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:hint="T"
+        android:ems="3"
+        app:layout_constraintRight_toLeftOf="@+id/right_crop"
+        app:layout_constraintBottom_toTopOf="@+id/cancel" />
+
+    <EditText
+        android:id="@+id/right_crop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:hint="R"
+        android:ems="3"
+        app:layout_constraintRight_toLeftOf="@+id/bottom_crop"
+        app:layout_constraintBottom_toTopOf="@+id/cancel" />
+
+    <EditText
+        android:id="@+id/bottom_crop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:textAlignment="center"
+        android:hint="B"
+        android:ems="3"
+        app:layout_constraintRight_toLeftOf="@+id/crop"
+        app:layout_constraintBottom_toTopOf="@+id/cancel" />
+
+    <Button
+        android:id="@+id/crop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cancel"
+        android:onClick="onCrop"
+        android:text="Crop" />
+
+    <Button
+        android:id="@+id/grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@+id/undo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="onGrey"
+        android:text="Grey" />
+
+    <Button
+        android:id="@+id/undo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@+id/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="onUndo"
+        android:text="Undo" />
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@id/cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="onSave"
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:onClick="onCancel"
+        android:text="Cancel" />
+
+</android.support.constraint.ConstraintLayout>
