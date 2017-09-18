@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--http://archive.oreilly.com/oreillyschool/courses/android2/CameraAdvanced.html-->
+<!--Refernce http://archive.oreilly.com/oreillyschool/courses/android2/CameraAdvanced.html-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#999999"
     android:orientation="vertical" >
-
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="capturing_image" />-->
 
     <FrameLayout
         android:id="@+id/camera_frame"
@@ -37,19 +31,19 @@
 
         <Button
             android:id="@+id/capture"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Capture" />
 
         <Button
             android:id="@+id/save"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Save" />
 
         <Button
             android:id="@+id/quit"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onQuit"
             android:text="Quit" />

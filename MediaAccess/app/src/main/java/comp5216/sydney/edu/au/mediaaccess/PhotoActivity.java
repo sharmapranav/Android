@@ -36,8 +36,7 @@ public class PhotoActivity extends Activity {
     }
 
     /**
-     * https://gist.github.com/firzan/5848737
-     *
+     * Reference https://gist.github.com/firzan/5848737
      * @param view
      */
     public void onGrey(View view) {
