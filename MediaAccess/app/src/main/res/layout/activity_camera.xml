@@ -33,12 +33,14 @@
             android:id="@+id/capture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onCapture"
             android:text="Capture" />
 
         <Button
             android:id="@+id/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onSave"
             android:text="Save" />
 
         <Button
