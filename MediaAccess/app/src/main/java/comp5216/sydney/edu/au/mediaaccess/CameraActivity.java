@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,14 +23,11 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
     private static final String KEY_IS_CAPTURING = "is_capturing";
 
-    private boolean hasCaptured = false;
-
-    private Camera mCamera;
-    private ImageView mCameraImage;
-    private SurfaceView mCameraPreview;
-    private Button mCaptureImageButton;
-    private byte[] mCameraData;
-    private boolean mIsCapturing;
+    private Camera camera;
+    private ImageView imageView;
+    private SurfaceView surfaceView;
+    private byte[] photoData;
+    private boolean isCapturing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,57 +35,54 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
         setContentView(R.layout.activity_camera);
 
-        mCameraImage = findViewById(R.id.camera_image_view);
-        mCameraImage.setVisibility(View.INVISIBLE);
+        imageView = findViewById(R.id.camera_image_view);
+        imageView.setVisibility(View.INVISIBLE);
 
-        mCameraPreview = findViewById(R.id.preview_view);
-        final SurfaceHolder surfaceHolder = mCameraPreview.getHolder();
+        surfaceView = findViewById(R.id.preview_view);
+
+        final SurfaceHolder surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
 
-        mIsCapturing = true;
+        isCapturing = true;
     }
 
     public void onCapture(View v) {
 
-        if (!hasCaptured) {
-            // not captured
+        if (surfaceView.getVisibility() == View.VISIBLE) {
             captureImage();
         } else {
-            //captured
             setupImageCapture();
         }
     }
 
     private void captureImage() {
-        mCamera.takePicture(null, null, this);
+        camera.takePicture(null, null, this);
     }
 
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
-        mCameraData = data;
+        photoData = data;
         setupImageDisplay();
     }
 
     private void setupImageDisplay() {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(mCameraData, 0, mCameraData.length);
-        mCameraImage.setImageBitmap(bitmap);
-        mCamera.stopPreview();
-        mCameraPreview.setVisibility(View.INVISIBLE);
-        mCameraImage.setVisibility(View.VISIBLE);
-        hasCaptured = true;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
+        imageView.setImageBitmap(bitmap);
+        camera.stopPreview();
+        surfaceView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.VISIBLE);
     }
 
     private void setupImageCapture() {
-        mCameraImage.setVisibility(View.INVISIBLE);
-        mCameraPreview.setVisibility(View.VISIBLE);
-        mCamera.startPreview();
-        hasCaptured = false;
+        imageView.setVisibility(View.INVISIBLE);
+        surfaceView.setVisibility(View.VISIBLE);
+        camera.startPreview();
     }
 
     public void onSave(View v) {
-        if (mCameraData != null) {
+        if (photoData != null && imageView.getVisibility() == View.VISIBLE) {
 
-            Bitmap bmp = BitmapFactory.decodeByteArray(mCameraData, 0, mCameraData.length);
+            Bitmap bmp = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
             String photoPath = getIntent().getStringExtra("photoPath");
 
             FileOutputStream fs = null;
@@ -108,9 +101,6 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
             Toast.makeText(this, "Picture was saved!",
                     Toast.LENGTH_SHORT).show();
-
-            setResult(RESULT_OK);
-            finish();
         } else {
             Toast.makeText(this, "Nothing to save",
                     Toast.LENGTH_SHORT).show();
@@ -118,7 +108,7 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     }
 
     public void onQuit(View view) {
-        setResult(RESULT_CANCELED);
+        setResult(RESULT_OK);
         finish();
     }
 
@@ -126,15 +116,15 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
-        savedInstanceState.putBoolean(KEY_IS_CAPTURING, mIsCapturing);
+        savedInstanceState.putBoolean(KEY_IS_CAPTURING, isCapturing);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        mIsCapturing = savedInstanceState.getBoolean(KEY_IS_CAPTURING, mCameraData == null);
-        if (mCameraData != null) {
+        isCapturing = savedInstanceState.getBoolean(KEY_IS_CAPTURING, photoData == null);
+        if (photoData != null) {
             setupImageDisplay();
         } else {
             setupImageCapture();
@@ -145,12 +135,12 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     protected void onResume() {
         super.onResume();
 
-        if (mCamera == null) {
+        if (camera == null) {
             try {
-                mCamera = Camera.open();
-                mCamera.setPreviewDisplay(mCameraPreview.getHolder());
-                if (mIsCapturing) {
-                    mCamera.startPreview();
+                camera = Camera.open();
+                camera.setPreviewDisplay(surfaceView.getHolder());
+                if (isCapturing) {
+                    camera.startPreview();
                 }
             } catch (Exception e) {
                 Toast.makeText(CameraActivity.this, "Unable to open camera.", Toast.LENGTH_LONG)
@@ -163,19 +153,19 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     protected void onPause() {
         super.onPause();
 
-        if (mCamera != null) {
-            mCamera.release();
-            mCamera = null;
+        if (camera != null) {
+            camera.release();
+            camera = null;
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (mCamera != null) {
+        if (camera != null) {
             try {
-                mCamera.setPreviewDisplay(holder);
-                if (mIsCapturing) {
-                    mCamera.startPreview();
+                camera.setPreviewDisplay(holder);
+                if (isCapturing) {
+                    camera.startPreview();
                 }
             } catch (IOException e) {
                 Toast.makeText(CameraActivity.this, "Unable to start camera preview.", Toast.LENGTH_LONG).show();
