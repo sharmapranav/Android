@@ -11,6 +11,7 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity {
 
     private Fragment mRunFragment;
+    private Fragment mMapFragment;
     private Fragment mMusicFragment;
     private Fragment mHistoryFragment;
     private Fragment mCurrentFragment;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mRunFragment = new RunFragment();
+        mMapFragment = new MapFragment();
         mMusicFragment = new MusicFragment();
         mHistoryFragment = new HistoryFragment();
         mCurrentFragment = mRunFragment;
@@ -41,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_run:
                     mCurrentFragment = mRunFragment;
+                    break;
+                case R.id.navigation_map:
+                    mCurrentFragment = mMapFragment;
                     break;
                 case R.id.navigation_music:
                     mCurrentFragment = mMusicFragment;
