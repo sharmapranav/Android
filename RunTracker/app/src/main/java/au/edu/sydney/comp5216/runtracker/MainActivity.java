@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +37,16 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
+    public void onRunStatusClick(View view) {
+        Button runStatus = (Button) findViewById(R.id.runStatus);
+
+        if (runStatus.getText().equals(getString(R.string.start_run))) {
+            runStatus.setText(getString(R.string.stop_run));
+        } else if (runStatus.getText().equals(getString(R.string.stop_run))) {
+            runStatus.setText(getString(R.string.start_run));
+        }
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -54,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentFragment = mHistoryFragment;
                     break;
             }
+
             // http://www.truiton.com/2017/01/android-bottom-navigation-bar-example/
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.mainLayout, mCurrentFragment);

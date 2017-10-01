@@ -1,24 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/runLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_weight="1"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/runLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            style="@style/textViewStyle"
+            android:layout_alignParentLeft="true"
+            android:text="@string/speed" />
+
+        <TextView
+            android:id="@+id/speed"
+            style="@style/textViewStyle2"
+            android:layout_centerHorizontal="true"
             android:text="@string/title_run" />
-    </FrameLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/textViewStyle"
+            android:layout_alignParentLeft="true"
+            android:text="@string/pace" />
+
+        <TextView
+            android:id="@+id/pace"
+            style="@style/textViewStyle2"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_run" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/textViewStyle"
+            android:layout_alignParentLeft="true"
+            android:text="@string/time" />
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/textViewStyle2"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_run" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/textViewStyle"
+            android:layout_alignParentLeft="true"
+            android:text="@string/distance" />
+
+        <TextView
+            android:id="@+id/distance"
+            style="@style/textViewStyle2"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_run" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/runStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onRunStatusClick"
+        android:text="@string/start_run" />
 
 </LinearLayout>

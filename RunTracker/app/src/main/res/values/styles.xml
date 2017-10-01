@@ -8,4 +8,19 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="textViewStyle">
+        <item name="android:textSize">20dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="textViewStyle2" parent="textViewStyle">
+        <item name="android:textSize">26dp</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>
