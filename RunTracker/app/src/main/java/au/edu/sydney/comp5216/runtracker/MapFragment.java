@@ -2,6 +2,7 @@ package au.edu.sydney.comp5216.runtracker;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -28,7 +29,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,12 +43,12 @@ public class MapFragment extends Fragment
 
     View view;
     GoogleMap mGoogleMap;
-//    SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,12 +61,8 @@ public class MapFragment extends Fragment
         view = inflater.inflate(R.layout.fragment_map, container, false);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
-        try {
-            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
-            mapFragment.getMapAsync(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
+        mapFragment.getMapAsync(this);
 
         return view;
     }
@@ -84,7 +80,6 @@ public class MapFragment extends Fragment
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-//        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -131,21 +126,29 @@ public class MapFragment extends Fragment
         public void onLocationResult(LocationResult locationResult) {
             for (Location location : locationResult.getLocations()) {
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
+
+                if(mLastLocation !=null && mLastLocation.equals(location)) {
+                    if (mCurrLocationMarker != null) {
+                        mCurrLocationMarker.remove();
+                    }
                 }
+
+                mLastLocation = location;
+
+                Intent locationData = new Intent("LocationChanged");
+                locationData.putExtra("location", location);
+                getContext().sendBroadcast(locationData);
 
                 //Place current location marker
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
                 //move map camera
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             }
         }
     };
@@ -157,8 +160,6 @@ public class MapFragment extends Fragment
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
     }
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -230,5 +231,4 @@ public class MapFragment extends Fragment
             // permissions this app might request
         }
     }
-
 }

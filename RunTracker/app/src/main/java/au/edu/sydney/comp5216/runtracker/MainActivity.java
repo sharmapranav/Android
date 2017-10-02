@@ -1,5 +1,10 @@
 package au.edu.sydney.comp5216.runtracker;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,7 +49,17 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        registerReceiver(locationReceiver, new IntentFilter("LocationChanged"));
     }
+
+    BroadcastReceiver locationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Location location = intent.getParcelableExtra("location");
+            updateLocation(location);
+        }
+    };
 
     public void onRunStatusClick(View view) {
         Button runStatus = (Button) findViewById(R.id.runStatus);
@@ -52,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
             runStatus.setText(getString(R.string.stop_run));
         } else if (runStatus.getText().equals(getString(R.string.stop_run))) {
             runStatus.setText(getString(R.string.start_run));
+        }
+    }
+
+    public void updateLocation(Location location){
+        if(location != null)
+        {
+            Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 
