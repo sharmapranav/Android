@@ -30,7 +30,15 @@ public class MainActivity extends AppCompatActivity {
         mCurrentFragment = mRunFragment;
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.mainLayout, mCurrentFragment);
+        transaction.add(R.id.mainLayout, mRunFragment);
+        transaction.hide(mRunFragment);
+        transaction.add(R.id.mainLayout, mMapFragment);
+        transaction.hide(mMapFragment);
+        transaction.add(R.id.mainLayout, mMusicFragment);
+        transaction.hide(mMusicFragment);
+        transaction.add(R.id.mainLayout, mHistoryFragment);
+        transaction.hide(mHistoryFragment);
+        transaction.show(mCurrentFragment);
         transaction.commit();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -52,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            // http://www.truiton.com/2017/01/android-bottom-navigation-bar-example/
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.hide(mCurrentFragment);
             switch (item.getItemId()) {
                 case R.id.navigation_run:
                     mCurrentFragment = mRunFragment;
@@ -66,10 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentFragment = mHistoryFragment;
                     break;
             }
-
-            // http://www.truiton.com/2017/01/android-bottom-navigation-bar-example/
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainLayout, mCurrentFragment);
+            transaction.show(mCurrentFragment);
             transaction.commit();
             return true;
         }
