@@ -1,9 +1,13 @@
 package au.edu.sydney.comp5216.runtracker;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,12 +36,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 /**
  * https://stackoverflow.com/questions/44992014/how-to-get-periodic-current-location-updates-using-locationrequest-and-fusedloca
  */
 public class MapFragment extends Fragment
         implements OnMapReadyCallback,
+//        GoogleMap.OnCameraMoveStartedListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -49,6 +55,8 @@ public class MapFragment extends Fragment
     Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    PolylineOptions polylineOptions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,8 +72,19 @@ public class MapFragment extends Fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
         mapFragment.getMapAsync(this);
 
+        polylineOptions = new PolylineOptions();
+        getActivity().registerReceiver(runEndReceiver, new IntentFilter("RunCompleted"));
+
         return view;
     }
+
+    BroadcastReceiver runEndReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            polylineOptions = null;
+            polylineOptions = new PolylineOptions();
+        }
+    };
 
     @Override
     public void onPause() {
@@ -80,6 +99,8 @@ public class MapFragment extends Fragment
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -96,8 +117,26 @@ public class MapFragment extends Fragment
         } else {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
+
         }
     }
+//
+//    @Override
+//    public void onCameraMoveStarted(int reason) {
+//
+//        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+//            Toast.makeText(this, "The user gestured on the map.",
+//                    Toast.LENGTH_SHORT).show();
+//        } else if (reason == GoogleMap.OnCameraMoveStartedListener
+//                .REASON_API_ANIMATION) {
+//            Toast.makeText(this, "The user tapped something on the map.",
+//                    Toast.LENGTH_SHORT).show();
+//        } else if (reason == GoogleMap.OnCameraMoveStartedListener
+//                .REASON_DEVELOPER_ANIMATION) {
+//            Toast.makeText(this, "The app moved the camera.",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -139,6 +178,8 @@ public class MapFragment extends Fragment
                 locationData.putExtra("location", location);
                 getContext().sendBroadcast(locationData);
 
+
+
                 //Place current location marker
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -148,8 +189,19 @@ public class MapFragment extends Fragment
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
                 //move map camera
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                if(polylineOptions.getPoints().isEmpty()) {
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                }
+                else
+                {
+                    float zoom = mGoogleMap.getCameraPosition().zoom;
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+                }
+                polylineOptions.add(latLng);
             }
+            polylineOptions.color(Color.BLUE);
+            mGoogleMap.clear();
+            mGoogleMap.addPolyline(polylineOptions);
         }
     };
 
