@@ -1,10 +1,5 @@
 package au.edu.sydney.comp5216.runtracker;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,9 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +15,16 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mMusicFragment;
     private Fragment mHistoryFragment;
     private Fragment mCurrentFragment;
+
+//    private TextView mPace;
+//    private TextView mSpeed;
+//    private TextView mDistance;
+//    private TextView mTime;
+//    private long mRunStartTime;
+//    private Location mLastLocation;
+//
+//    private Timer mTimer;
+//    final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
         mMusicFragment = new MusicFragment();
         mHistoryFragment = new HistoryFragment();
         mCurrentFragment = mRunFragment;
+
+//        mPace = (TextView) findViewById(R.id.pace);
+//        mSpeed = (TextView) findViewById(R.id.speed);
+//        mDistance = (TextView) findViewById(R.id.distance);
+//        mTime = (TextView) findViewById(R.id.time);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.mainLayout, mRunFragment);
@@ -50,34 +57,83 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        registerReceiver(locationReceiver, new IntentFilter("LocationChanged"));
+//        registerReceiver(locationReceiver, new IntentFilter("LocationChanged"));
     }
 
-    BroadcastReceiver locationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Location location = intent.getParcelableExtra("location");
-            updateLocation(location);
-        }
-    };
-
-    public void onRunStatusClick(View view) {
-        Button runStatus = (Button) findViewById(R.id.runStatus);
-
-        if (runStatus.getText().equals(getString(R.string.start_run))) {
-            runStatus.setText(getString(R.string.stop_run));
-        } else if (runStatus.getText().equals(getString(R.string.stop_run))) {
-            runStatus.setText(getString(R.string.start_run));
-        }
-    }
-
-    public void updateLocation(Location location){
-        if(location != null)
-        {
-            Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
+//    BroadcastReceiver locationReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            mLastLocation = intent.getParcelableExtra("location");
+////            updateLocation(location);
+//        }
+//    };
+//
+//    public void onRunStatusClick(View view) {
+//        if (mLastLocation == null) {
+////            Toast.makeText(this, "Location services not working! Please check location services.", Toast.LENGTH_SHORT).show();
+//            ShowToast("Location services not working! Please check location services.");
+//            return;
+//        }
+//
+//        Button runStatus = (Button) findViewById(R.id.runStatus);
+//
+//        if (runStatus.getText().equals(getString(R.string.start_run))) {
+//            runStatus.setText(getString(R.string.stop_run));
+//            startRun();
+//        } else if (runStatus.getText().equals(getString(R.string.stop_run))) {
+//            runStatus.setText(getString(R.string.start_run));
+//            stopRun();
+//        }
+//    }
+//
+//    // https://stackoverflow.com/questions/4208401/timer-with-callback
+//    private void startRun() {
+//        mRunStartTime = System.currentTimeMillis();
+//
+//        mTimer = new Timer();
+//        TimerTask timerTask = new TimerTask() {
+//            public void run() {
+//                handler.post(new Runnable() {
+//                    public void run() {
+//                        updateRunData();
+//                    }
+//                });
+//            }
+//        };
+//
+//        mTimer.scheduleAtFixedRate(timerTask, 0, 1000);
+//    }
+//
+//    private void updateRunData() {
+//        String currentTime = Long.toString(System.currentTimeMillis() - mRunStartTime);
+////        ShowToast(currentTime);
+//        try {
+//            mTime.setText(currentTime);
+//        }
+//        catch (Exception ex){
+//            ShowToast(ex.getMessage());
+//        }
+//    }
+//
+//    private void stopRun() {
+//        if (mTimer != null) {
+//            mTimer.cancel();
+//            mTimer = null;
+//        }
+//    }
+//
+//    private void ShowToast(String message)
+//    {
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+//    }
+////
+////    public void updateLocation(Location location){
+////        if(location != null)
+////        {
+////            Toast.makeText(this, location.toString(), Toast.LENGTH_SHORT).show();
+////        }
+////    }
+//
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 

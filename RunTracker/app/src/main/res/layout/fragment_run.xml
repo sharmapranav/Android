@@ -13,29 +13,12 @@
         <TextView
             style="@style/textViewStyle"
             android:layout_alignParentLeft="true"
-            android:text="@string/speed" />
-
-        <TextView
-            android:id="@+id/speed"
-            style="@style/textViewStyle2"
-            android:layout_centerHorizontal="true"
-            android:text="@string/title_run" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            style="@style/textViewStyle"
-            android:layout_alignParentLeft="true"
             android:text="@string/pace" />
 
         <TextView
             android:id="@+id/pace"
             style="@style/textViewStyle2"
-            android:layout_centerHorizontal="true"
-            android:text="@string/title_run" />
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -45,13 +28,12 @@
         <TextView
             style="@style/textViewStyle"
             android:layout_alignParentLeft="true"
-            android:text="@string/time" />
+            android:text="@string/speed" />
 
         <TextView
-            android:id="@+id/time"
+            android:id="@+id/speed"
             style="@style/textViewStyle2"
-            android:layout_centerHorizontal="true"
-            android:text="@string/title_run" />
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -66,15 +48,28 @@
         <TextView
             android:id="@+id/distance"
             style="@style/textViewStyle2"
-            android:layout_centerHorizontal="true"
-            android:text="@string/title_run" />
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/textViewStyle"
+            android:layout_alignParentLeft="true"
+            android:text="@string/time" />
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/textViewStyle2"
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
     <Button
         android:id="@+id/runStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onRunStatusClick"
         android:text="@string/start_run" />
 
 </LinearLayout>
