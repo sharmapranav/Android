@@ -1,4 +1,4 @@
-package au.edu.sydney.comp5216.runtracker;
+package au.edu.sydney.comp5216.runtracker.fragments;
 
 import android.Manifest;
 import android.content.Context;
@@ -24,6 +24,8 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+
+import au.edu.sydney.comp5216.runtracker.R;
 
 /**
  * Created by pranav on 29/09/2017.
@@ -132,7 +134,7 @@ public class MusicFragment extends Fragment {
             if (null != cursor) {
                 cursor.moveToFirst();
 
-                mediaAdapter = new MediaCursorAdapter(getContext(), R.layout.listitem, cursor);
+                mediaAdapter = new MediaCursorAdapter(getContext(), R.layout.layout_song_item, cursor);
 
                 songList.setAdapter(mediaAdapter);
             }
@@ -253,8 +255,8 @@ public class MusicFragment extends Fragment {
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(context);
-//            View v = inflater.inflate(R.layout.listitem, parent, false);
-            View v = inflater.inflate(R.layout.listitem, parent, false);
+//            View v = inflater.inflate(R.layout.layout_song_item, parent, false);
+            View v = inflater.inflate(R.layout.layout_song_item, parent, false);
 
             bindView(v, context, cursor);
 

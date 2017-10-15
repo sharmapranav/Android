@@ -19,6 +19,6 @@
     <item
         android:id="@+id/navigation_history"
         android:icon="@drawable/past"
-        android:title="@string/title_history" />
+        android:title="@string/title_past_runs" />
 
 </menu>

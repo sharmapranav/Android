@@ -1,4 +1,4 @@
-package au.edu.sydney.comp5216.runtracker;
+package au.edu.sydney.comp5216.runtracker.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,16 +14,20 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import au.edu.sydney.comp5216.runtracker.adapters.RunItemsAdapter;
+import au.edu.sydney.comp5216.runtracker.R;
+import au.edu.sydney.comp5216.runtracker.models.RunItem;
+
 /**
  * Created by pranav on 29/09/2017.
  */
 
-public class HistoryFragment extends Fragment {
+public class PastRunsFragment extends Fragment {
 
     View view;
     ListView listview;
-    ArrayList<RunHistory> runHistories;
-    ArrayAdapter<RunHistory> itemsAdapter;
+    ArrayList<RunItem> runItems;
+    ArrayAdapter<RunItem> runItemsAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,22 +40,22 @@ public class HistoryFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_history, container, false);
 
-        runHistories = new ArrayList<>();
+        runItems = new ArrayList<>();
         listview = view.findViewById(R.id.listView);
-        itemsAdapter = new HistoryListAdapter(getContext(), runHistories);
-        listview.setAdapter(itemsAdapter);
+        runItemsAdapter = new RunItemsAdapter(getContext(), runItems);
+        listview.setAdapter(runItemsAdapter);
 
-        getActivity().registerReceiver(runEndReceiver, new IntentFilter("RunCompleted"));
+        getActivity().registerReceiver(runCompletedReceiver, new IntentFilter("RunCompleted"));
 
         return view;
     }
 
-    BroadcastReceiver runEndReceiver = new BroadcastReceiver() {
+    BroadcastReceiver runCompletedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            RunHistory runHistory = (RunHistory) intent.getSerializableExtra("runHistory");
-            runHistories.add(0, runHistory);
-            itemsAdapter.notifyDataSetChanged();
+            RunItem runItem = (RunItem) intent.getSerializableExtra("runItem");
+            runItems.add(0, runItem);
+            runItemsAdapter.notifyDataSetChanged();
         }
     };
 

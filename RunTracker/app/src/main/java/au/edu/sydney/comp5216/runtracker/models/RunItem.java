@@ -1,4 +1,4 @@
-package au.edu.sydney.comp5216.runtracker;
+package au.edu.sydney.comp5216.runtracker.models;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -9,7 +9,7 @@ import java.util.Locale;
  * Created by prana on 6/10/2017.
  */
 
-public class RunHistory  implements Serializable {
+public class RunItem implements Serializable {
 
     private String date;
     private String pace;
@@ -19,10 +19,10 @@ public class RunHistory  implements Serializable {
 
     static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.getDefault());
 
-    public RunHistory(){
+    public RunItem(){
     }
 
-    public RunHistory(String pace, String speed, String distance, String time){
+    public RunItem(String pace, String speed, String distance, String time){
         this.date = "Date: " + dateFormatter.format(new Date());
         this.pace = "Pace: " + pace;
         this.speed = "Speed: " + speed;
@@ -35,10 +35,4 @@ public class RunHistory  implements Serializable {
     public String getSpeed(){ return speed; }
     public String getDistance(){ return distance; }
     public String getTime(){ return time; }
-
-//    public void setDate(String date){ this.date = date; }
-//    public void setPace(String pace){ this.pace = pace; }
-//    public void setSpeed(String speed){ this.speed = speed; }
-//    public void setDistance(String distance){ this.distance = distance; }
-//    public void setTime(String time){ this.time = time; }
 }

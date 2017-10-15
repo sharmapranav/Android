@@ -1,4 +1,4 @@
-package au.edu.sydney.comp5216.runtracker;
+package au.edu.sydney.comp5216.runtracker.fragments;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -45,7 +45,6 @@ import au.edu.sydney.comp5216.runtracker.R;
  */
 public class MapFragment extends Fragment
         implements OnMapReadyCallback,
-//        GoogleMap.OnCameraMoveStartedListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -122,23 +121,6 @@ public class MapFragment extends Fragment
 
         }
     }
-//
-//    @Override
-//    public void onCameraMoveStarted(int reason) {
-//
-//        if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-//            Toast.makeText(this, "The user gestured on the map.",
-//                    Toast.LENGTH_SHORT).show();
-//        } else if (reason == GoogleMap.OnCameraMoveStartedListener
-//                .REASON_API_ANIMATION) {
-//            Toast.makeText(this, "The user tapped something on the map.",
-//                    Toast.LENGTH_SHORT).show();
-//        } else if (reason == GoogleMap.OnCameraMoveStartedListener
-//                .REASON_DEVELOPER_ANIMATION) {
-//            Toast.makeText(this, "The app moved the camera.",
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -187,7 +169,6 @@ public class MapFragment extends Fragment
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
-//                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
                 //move map camera

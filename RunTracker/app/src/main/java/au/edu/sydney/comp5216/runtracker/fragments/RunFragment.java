@@ -1,4 +1,4 @@
-package au.edu.sydney.comp5216.runtracker;
+package au.edu.sydney.comp5216.runtracker.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,6 +26,9 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import au.edu.sydney.comp5216.runtracker.R;
+import au.edu.sydney.comp5216.runtracker.models.RunItem;
 
 /**
  * Created by pranav on 30/09/2017.
@@ -157,9 +160,9 @@ public class RunFragment extends Fragment {
         }
         latLngs.clear();
 
-        RunHistory runHistory = new RunHistory(pace.getText().toString(), speed.getText().toString(), distance.getText().toString(), time.getText().toString());
+        RunItem runItem = new RunItem(pace.getText().toString(), speed.getText().toString(), distance.getText().toString(), time.getText().toString());
         Intent runData = new Intent("RunCompleted");
-        runData.putExtra("runHistory", runHistory);
+        runData.putExtra("runItem", runItem);
         getContext().sendBroadcast(runData);
     }
 
