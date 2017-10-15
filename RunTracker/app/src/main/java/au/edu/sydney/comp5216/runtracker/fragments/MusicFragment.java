@@ -1,7 +1,6 @@
 package au.edu.sydney.comp5216.runtracker.fragments;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.MediaPlayer;
@@ -19,13 +18,12 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 import au.edu.sydney.comp5216.runtracker.R;
+import au.edu.sydney.comp5216.runtracker.adapters.MediaCursorAdapter;
 
 /**
  * Created by pranav on 29/09/2017.
@@ -56,7 +54,6 @@ public class MusicFragment extends Fragment {
 
     private final Handler handler = new Handler();
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,46 +64,37 @@ public class MusicFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_music, container, false);
 
-        intialize();
+        songList = view.findViewById(R.id.songList);
+        currentSong = view.findViewById(R.id.currentSong);
+        seekbar = view.findViewById(R.id.seekBar);
+        playButton = view.findViewById(R.id.playPause);
+        prevButton = view.findViewById(R.id.previous);
+        nextButton = view.findViewById(R.id.next);
+
+        player = new MediaPlayer();
+
+        player.setOnCompletionListener(onCompletion);
+        player.setOnErrorListener(onError);
+        seekbar.setOnSeekBarChangeListener(seekBarChanged);
+
+        songList.setOnItemClickListener(onListItemClick);
+        playButton.setOnClickListener(onButtonClick);
+        nextButton.setOnClickListener(onButtonClick);
+        prevButton.setOnClickListener(onButtonClick);
+
         fetchSongs();
         return view;
     }
 
-    private void intialize() {
-        try {
-            songList = view.findViewById(R.id.songList);
-            currentSong = view.findViewById(R.id.currentSong);
-            seekbar = view.findViewById(R.id.seekBar);
-            playButton = view.findViewById(R.id.playPause);
-            prevButton = view.findViewById(R.id.previous);
-            nextButton = view.findViewById(R.id.next);
-
-            player = new MediaPlayer();
-
-            player.setOnCompletionListener(onCompletion);
-            player.setOnErrorListener(onError);
-            seekbar.setOnSeekBarChangeListener(seekBarChanged);
-
-            songList.setOnItemClickListener(onListItemClick);
-            playButton.setOnClickListener(onButtonClick);
-            nextButton.setOnClickListener(onButtonClick);
-            prevButton.setOnClickListener(onButtonClick);
-        }
-        catch (Exception ex)
-        {
-            System.out.print(ex.getMessage());
-        }
-    }
-
     private void checkExternalPermission() {
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
 
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_MUSIC);
-            }
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_MUSIC);
+        }
 
     }
 
@@ -147,17 +135,6 @@ public class MusicFragment extends Fragment {
         return (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED);
     }
-
-
-
-//    protected void onListItemClick(ListView list, View view, int position, long id) {
-//
-////        super.onListItemClick(list, view, position, id);
-//
-//        currentFile = (String) view.getTag();
-//
-//        startPlay(currentFile);
-//    }
 
     @Override
     public void onDestroy() {
@@ -218,51 +195,6 @@ public class MusicFragment extends Fragment {
         handler.postDelayed(updatePositionRunnable, UPDATE_FREQUENCY);
     }
 
-    private class MediaCursorAdapter extends SimpleCursorAdapter {
-
-        public MediaCursorAdapter(Context context, int layout, Cursor c) {
-            super(context, layout, c,
-                    new String[]{MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.TITLE, MediaStore.Audio.AudioColumns.DURATION},
-                    new int[]{R.id.displayname, R.id.title, R.id.duration});
-//                    new String[]{/*MediaStore.MediaColumns.DISPLAY_NAME,*/ MediaStore.MediaColumns.TITLE},
-//            new int[]{/*R.id.subtitle_view,*/ R.id.title});
-        }
-
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            TextView title = (TextView) view.findViewById(R.id.title);
-            TextView name = (TextView) view.findViewById(R.id.displayname);
-            TextView duration = (TextView) view.findViewById(R.id.duration);
-
-            name.setText(cursor.getString(
-                    cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)));
-
-            title.setText(cursor.getString(
-                    cursor.getColumnIndex(MediaStore.MediaColumns.TITLE)));
-
-            long durationInMs = Long.parseLong(cursor.getString(
-                    cursor.getColumnIndex(MediaStore.Audio.AudioColumns.DURATION)));
-
-            double durationInMin = ((double) durationInMs / 1000.0) / 60.0;
-
-            durationInMin = new BigDecimal(Double.toString(durationInMin)).setScale(2, BigDecimal.ROUND_UP).doubleValue();
-
-//            duration.setText("" + durationInMin);
-
-            view.setTag(cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)));
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-//            View v = inflater.inflate(R.layout.layout_song_item, parent, false);
-            View v = inflater.inflate(R.layout.layout_song_item, parent, false);
-
-            bindView(v, context, cursor);
-
-            return v;
-        }
-    }
 
     private AdapterView.OnItemClickListener onListItemClick = new AdapterView.OnItemClickListener() {
         @Override
