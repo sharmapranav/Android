@@ -35,7 +35,6 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_history, container, false);
-//        readItemsFromDatabase();
 
         runHistories = new ArrayList<>();
         listview = view.findViewById(R.id.listView);
@@ -51,9 +50,8 @@ public class HistoryFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             RunHistory runHistory = (RunHistory) intent.getSerializableExtra("runHistory");
-            runHistories.add(runHistory);
+            runHistories.add(0, runHistory);
             itemsAdapter.notifyDataSetChanged();
-            //            saveItemsToDatabase();
         }
     };
 
