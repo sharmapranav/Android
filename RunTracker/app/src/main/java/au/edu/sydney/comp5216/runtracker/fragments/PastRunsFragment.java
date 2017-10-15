@@ -41,6 +41,8 @@ public class PastRunsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_history, container, false);
 
         runItems = new ArrayList<>();
+        runItems.addAll(RunItem.listAll(RunItem.class));
+
         listview = view.findViewById(R.id.listView);
         runItemsAdapter = new RunItemsAdapter(getContext(), runItems);
         listview.setAdapter(runItemsAdapter);
@@ -56,6 +58,7 @@ public class PastRunsFragment extends Fragment {
             RunItem runItem = (RunItem) intent.getSerializableExtra("runItem");
             runItems.add(0, runItem);
             runItemsAdapter.notifyDataSetChanged();
+            runItem.save();
         }
     };
 

@@ -1,5 +1,7 @@
 package au.edu.sydney.comp5216.runtracker.models;
 
+import com.orm.SugarRecord;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +11,7 @@ import java.util.Locale;
  * Created by prana on 6/10/2017.
  */
 
-public class RunItem implements Serializable {
+public class RunItem extends SugarRecord<RunItem> implements Serializable {
 
     private String date;
     private String pace;
