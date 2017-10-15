@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import au.edu.sydney.comp5216.runtracker.R;
+
 /**
  * https://stackoverflow.com/questions/44992014/how-to-get-periodic-current-location-updates-using-locationrequest-and-fusedloca
  */
