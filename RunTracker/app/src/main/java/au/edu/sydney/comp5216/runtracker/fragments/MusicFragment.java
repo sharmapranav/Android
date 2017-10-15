@@ -21,6 +21,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import au.edu.sydney.comp5216.runtracker.R;
 import au.edu.sydney.comp5216.runtracker.adapters.MediaCursorAdapter;
@@ -48,6 +49,8 @@ public class MusicFragment extends Fragment {
     private ImageButton prevButton = null;
     private ImageButton nextButton = null;
 
+    Cursor cursor;
+    ArrayList<String> songFiles;
     private boolean isStarted = true;
     private String currentFile = "";
     private boolean isMoveingSeekBar = false;
@@ -117,7 +120,8 @@ public class MusicFragment extends Fragment {
     private void fetchSongs() {
         if (hasPermissionStorage()) {
 
-            Cursor cursor = getContext().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
+            songFiles = new ArrayList<>();
+            cursor = getContext().getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, null);
 
             if (null != cursor) {
                 cursor.moveToFirst();
@@ -125,6 +129,13 @@ public class MusicFragment extends Fragment {
                 mediaAdapter = new MediaCursorAdapter(getContext(), R.layout.layout_song_item, cursor);
 
                 songList.setAdapter(mediaAdapter);
+            }
+
+
+            cursor.moveToFirst();
+            while(!cursor.isLast()){
+                songFiles.add(cursor.getString(1));
+                cursor.moveToNext();
             }
         } else {
             checkExternalPermission();
@@ -259,7 +270,17 @@ public class MusicFragment extends Fragment {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
-            stopPlay();
+//            stopPlay();
+
+            int i = songFiles.indexOf(currentFile);
+            if(i < 0){
+                stopPlay();
+                return;
+            }
+
+            i = i < songFiles.size() ? i += 1: 0;
+
+            startPlay(songFiles.get(i));
         }
     };
 

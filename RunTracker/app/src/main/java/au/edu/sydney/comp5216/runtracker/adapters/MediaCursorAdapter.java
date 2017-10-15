@@ -23,18 +23,18 @@ public class MediaCursorAdapter extends SimpleCursorAdapter {
 
     public MediaCursorAdapter(Context context, int layout, Cursor c) {
         super(context, layout, c,
-                new String[]{MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.MediaColumns.TITLE, MediaStore.Audio.AudioColumns.DURATION},
-                new int[]{R.id.displayname, R.id.title, R.id.duration});
+                new String[]{/*MediaStore.MediaColumns.DISPLAY_NAME,*/ MediaStore.MediaColumns.TITLE, MediaStore.Audio.AudioColumns.DURATION},
+                new int[]{/*R.id.displayname,*/ R.id.title, R.id.duration});
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView title = (TextView) view.findViewById(R.id.title);
-        TextView name = (TextView) view.findViewById(R.id.displayname);
+//        TextView name = (TextView) view.findViewById(R.id.displayname);
         TextView duration = (TextView) view.findViewById(R.id.duration);
 
-        name.setText(cursor.getString(
-                cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)));
+//        name.setText(cursor.getString(
+//                cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)));
 
         title.setText(cursor.getString(
                 cursor.getColumnIndex(MediaStore.MediaColumns.TITLE)));

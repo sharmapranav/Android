@@ -5,28 +5,36 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/displayname"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:textSize="18dip"
-        android:textStyle="bold" />
+    <!--<TextView-->
+        <!--android:id="@+id/displayname"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:ellipsize="end"-->
+        <!--android:singleLine="true"-->
+        <!--android:textSize="18dip"-->
+        <!--android:textStyle="bold" />-->
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="4dp"
         android:orientation="horizontal">
+
+        <View
+            android:id="@+id/colored_bar"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            android:background="@color/colorAccent" />
 
         <TextView
             android:id="@+id/title"
+            android:padding="4dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:ellipsize="end"
-            android:singleLine="true"
-            android:textSize="15dip" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/duration"
@@ -34,8 +42,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="right"
-            android:singleLine="true"
-            android:textSize="15dip" />
+            android:textSize="15sp" />
     </LinearLayout>
 
 
