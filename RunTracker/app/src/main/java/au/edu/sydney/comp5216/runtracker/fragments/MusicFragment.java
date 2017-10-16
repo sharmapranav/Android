@@ -224,6 +224,10 @@ public class MusicFragment extends Fragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.playPause: {
+                    if(currentFile == null || currentFile == "" )
+                    {
+                        currentFile = songFiles.get(0);
+                    }
                     if (player.isPlaying()) {
                         handler.removeCallbacks(updatePositionRunnable);
                         player.pause();
@@ -242,32 +246,62 @@ public class MusicFragment extends Fragment {
                     break;
                 }
                 case R.id.next: {
-                    int seekto = player.getCurrentPosition() + STEP_VALUE;
-
-                    if (seekto > player.getDuration())
-                        seekto = player.getDuration();
-
-                    player.pause();
-                    player.seekTo(seekto);
-                    player.start();
-
+//                    int seekto = player.getCurrentPosition() + STEP_VALUE;
+//
+//                    if (seekto > player.getDuration())
+//                        seekto = player.getDuration();
+//
+//                    player.pause();
+//                    player.seekTo(seekto);
+//                    player.start();
+                    playNextSong();
                     break;
                 }
                 case R.id.previous: {
-                    int seekto = player.getCurrentPosition() - STEP_VALUE;
+//                    int seekto = player.getCurrentPosition() - STEP_VALUE;
+//
+//                    if (seekto < 0)
+//                        seekto = 0;
+//
+//                    player.pause();
+//                    player.seekTo(seekto);
+//                    player.start();
 
-                    if (seekto < 0)
-                        seekto = 0;
-
-                    player.pause();
-                    player.seekTo(seekto);
-                    player.start();
-
+                    playPreviousSong();
                     break;
                 }
             }
         }
     };
+
+    void playNextSong()
+    {
+        stopPlay();
+        int i = songFiles.indexOf(currentFile);
+        if(i < 0){
+            stopPlay();
+            return;
+        }
+
+        i = i < songFiles.size() - 1 ? i += 1: i;
+
+        currentFile = songFiles.get(i);
+        startPlay(currentFile);
+    }
+    void playPreviousSong()
+    {
+        stopPlay();
+        int i = songFiles.indexOf(currentFile);
+        if(i < 0){
+            stopPlay();
+            return;
+        }
+
+        i = i > 0 ? i -= 1: 0;
+
+        currentFile = songFiles.get(i);
+        startPlay(currentFile);
+    }
 
     private MediaPlayer.OnCompletionListener onCompletion = new MediaPlayer.OnCompletionListener() {
 
@@ -275,16 +309,7 @@ public class MusicFragment extends Fragment {
         public void onCompletion(MediaPlayer mp) {
 //            stopPlay();
 
-            int i = songFiles.indexOf(currentFile);
-            if(i < 0){
-                stopPlay();
-                return;
-            }
-
-            i = i < songFiles.size() ? i += 1: 0;
-
-            currentFile = songFiles.get(i);
-            startPlay(currentFile);
+            playNextSong();
         }
     };
 

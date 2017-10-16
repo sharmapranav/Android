@@ -11,7 +11,6 @@
         android:id="@+id/songList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/controls"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,6 +25,7 @@
 
         <TextView
             android:id="@+id/currentSong"
+            android:textSize="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -49,24 +49,24 @@
             android:id="@+id/previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:width="20dp"
-            android:height="10dp"
+            android:width="30dp"
+            android:height="20dp"
             android:src="@android:drawable/ic_media_previous" />
 
         <ImageButton
             android:id="@+id/playPause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:width="20dp"
-            android:height="10dp"
+            android:width="30dp"
+            android:height="20dp"
             android:src="@android:drawable/ic_media_play" />
 
         <ImageButton
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:width="20dp"
-            android:height="10dp"
+            android:width="30dp"
+            android:height="20dp"
             android:src="@android:drawable/ic_media_next" />
 
     </LinearLayout>
