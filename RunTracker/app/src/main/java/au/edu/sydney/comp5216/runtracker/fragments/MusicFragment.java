@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -137,6 +138,8 @@ public class MusicFragment extends Fragment {
                 songFiles.add(cursor.getString(1));
                 cursor.moveToNext();
             }
+            songFiles.add(cursor.getString(1));
+
         } else {
             checkExternalPermission();
         }
@@ -162,7 +165,7 @@ public class MusicFragment extends Fragment {
     private void startPlay(String file) {
         Log.i("Selected: ", file);
 
-        currentSong.setText(file);
+        currentSong.setText("Currently Playing: " + new File(file).getName());
         seekbar.setProgress(0);
 
         player.stop();
@@ -280,7 +283,8 @@ public class MusicFragment extends Fragment {
 
             i = i < songFiles.size() ? i += 1: 0;
 
-            startPlay(songFiles.get(i));
+            currentFile = songFiles.get(i);
+            startPlay(currentFile);
         }
     };
 
