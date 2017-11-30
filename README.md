@@ -1,12 +1,12 @@
 # Android
 
 ## Contents
-* [CloudService](#CloudService)
-* [MediaAccess](#MediaAccess)
-* [RunTracker](#RunTracker)
-* [ToDoList](#ToDoList)
+* [CloudService](#cloudservice)
+* [MediaAccess](#mediaaccess)
+* [RunTracker](#runtracker)
+* [ToDoList](#todolist)
 
-## CloudServicea
+## CloudService
 Simple app to pull temperature data from azure service
 
 ## MediaAccess
