@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_run"
+        android:icon="@drawable/running"
+        android:title="@string/title_run" />
+
+    <item
+        android:id="@+id/navigation_map"
+        android:icon="@drawable/map"
+        android:title="@string/title_map" />
+
+    <item
+        android:id="@+id/navigation_music"
+        android:icon="@drawable/music"
+        android:title="@string/title_music" />
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/past"
+        android:title="@string/title_past_runs" />
+
+</menu>
